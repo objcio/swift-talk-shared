@@ -6,8 +6,8 @@ public let decodingStrategy = JSONDecoder.DateDecodingStrategy.secondsSince1970
 
 public struct CollectionView: Codable {
     public struct Artwork: Codable {
-        var svg: URL
-        var png: URL
+        public var svg: URL
+        public var png: URL
     }
     public var id: String
     public var title: String
