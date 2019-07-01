@@ -20,6 +20,7 @@ public struct CollectionView: Codable {
 }
 
 public struct EpisodeView: Codable {
+    public var id: String
     public var number: Int
     public var title: String
     public var synopsis: String
