@@ -1,13 +1,26 @@
 import Foundation
 
-public let encodingStrategy = JSONEncoder.DateEncodingStrategy.secondsSince1970
+public let encoder: JSONEncoder = {
+    let r = JSONEncoder()
+    r.dateEncodingStrategy = .secondsSince1970
+    return r
+}()
 
-public let decodingStrategy = JSONDecoder.DateDecodingStrategy.secondsSince1970
+public let decoder: JSONDecoder = {
+    let r = JSONDecoder()
+    r.dateDecodingStrategy = .secondsSince1970
+    return r
+}()
+
 
 public struct CollectionView: Codable {
     public struct Artwork: Codable {
         public var svg: URL
         public var png: URL
+        public init(svg: URL, png: URL) {
+            self.svg = svg
+            self.png = png
+        }
     }
     public var id: String
     public var title: String
