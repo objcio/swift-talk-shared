@@ -30,6 +30,17 @@ public struct CollectionView: Codable {
     public var total_duration: Int
     public var description: String
     public var new: Bool
+
+    public init(id: String, title: String, url: URL, artwork: Artwork, episodes_count: Int, total_duration: Int, description: String, new: Bool) {
+        self.id = id
+        self.title = title
+        self.url = url
+        self.artwork = artwork
+        self.episodes_count = episodes_count
+        self.total_duration = total_duration
+        self.description = description
+        self.new = new
+	}
 }
 
 public struct EpisodeView: Codable {
@@ -46,4 +57,20 @@ public struct EpisodeView: Codable {
     public var subscription_only: Bool
     public var hls_url: URL?
     public var preview_url: URL?
+
+    public init(id: String, number: Int, title: String, synopsis: String, url: URL, small_poster_url: URL, poster_url: URL, media_duration: Int, released_at: Date, collection: String, subscription_only: Bool, hls_url: URL?, preview_url: URL?) {
+		self.id = id
+		self.number = number
+		self.title = title
+		self.synopsis = synopsis
+		self.url = url
+		self.small_poster_url = small_poster_url
+		self.poster_url = poster_url
+		self.media_duration = media_duration
+		self.released_at = released_at
+		self.collection = collection
+		self.subscription_only = subscription_only
+		self.hls_url = hls_url
+		self.preview_url = preview_url
+	}
 }
