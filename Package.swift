@@ -13,9 +13,11 @@ let package = Package(
             name: "ViewHelpers",
             targets: ["ViewHelpers"]),
     ],
-    dependencies: [],
+    dependencies: [
+         .package(url: "https://github.com/objcio/tiny-networking", from: "0.2.0"),
+    ],
     targets: [
-	    .target(name: "Model", dependencies: []),
+	    .target(name: "Model", dependencies: ["TinyNetworking"]),
 	    .target(name: "ViewHelpers", dependencies: []),
         .testTarget(
             name: "swift-talk-sharedTests",
