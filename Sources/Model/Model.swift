@@ -1,4 +1,5 @@
 import Foundation
+import TinyNetworking
 
 public let encoder: JSONEncoder = {
     let r = JSONEncoder()
@@ -6,12 +7,11 @@ public let encoder: JSONEncoder = {
     return r
 }()
 
-public let decoder: JSONDecoder = {
+let decoder: JSONDecoder = {
     let r = JSONDecoder()
     r.dateDecodingStrategy = .secondsSince1970
     return r
 }()
-
 
 public struct CollectionView: Codable {
     public struct Artwork: Codable {
@@ -73,4 +73,48 @@ public struct EpisodeView: Codable {
 		self.hls_url = hls_url
 		self.preview_url = preview_url
 	}
+}
+
+public struct Server {
+    public var baseURL: URL = URL(string: "https://talk.objc.io")!
+    
+    public var allEpisodes: Endpoint<[EpisodeView]> {
+        return Endpoint(json: .get, url: baseURL.appendingPathComponent("episodes.json"), decoder: decoder)
+    }
+    
+    public var allCollections: Endpoint<[CollectionView]> {
+        return Endpoint<[CollectionView]>(json: .get, url: URL(string: "https://talk.objc.io/collections.json")!, decoder: decoder)
+
+    }
+
+   public func authenticated(sessionId: String, csrf: String) -> Authenticated {
+        return Authenticated(baseURL: baseURL, sessionId: sessionId, csrf: csrf)
+    }
+}
+
+public struct PlayProgress: Codable {
+    public var csrf: String
+    public var progress: Int
+}
+
+public struct Authenticated {
+    let sessionId: String
+    let csrf: String
+    let baseURL: URL
+    init(baseURL: URL, sessionId: String, csrf: String) {
+        self.baseURL = baseURL
+        self.sessionId = sessionId
+        self.csrf = csrf
+    }
+    
+    var authHeaders: [String:String] {
+        return [
+            "Cookie": "session=\(sessionId)"
+        ]
+    }
+    
+    public func playProgress(episode: EpisodeView, progress: Int) -> Endpoint<()> {
+        let url = baseURL.appendingPathComponent("episodes/\(episode.id)/play-progress")
+        return Endpoint<()>(json: .post, url: url, body: PlayProgress(csrf: csrf, progress: progress), headers: authHeaders)
+    }
 }
