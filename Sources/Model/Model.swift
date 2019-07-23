@@ -7,7 +7,7 @@ public let encoder: JSONEncoder = {
     return r
 }()
 
-let decoder: JSONDecoder = {
+public let decoder: JSONDecoder = {
     let r = JSONDecoder()
     r.dateDecodingStrategy = .secondsSince1970
     return r
