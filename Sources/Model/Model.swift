@@ -76,7 +76,11 @@ public struct EpisodeView: Codable {
 }
 
 public struct Server {
-    public var baseURL: URL = URL(string: "https://talk.objc.io")!
+    public var baseURL: URL
+    
+    public init(baseURL: URL = URL(string: "https://talk.objc.io")!) {
+        self.baseURL = baseURL
+    }
     
     public var allEpisodes: Endpoint<[EpisodeView]> {
         return Endpoint(json: .get, url: baseURL.appendingPathComponent("episodes.json"), decoder: decoder)
