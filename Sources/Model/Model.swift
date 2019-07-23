@@ -92,6 +92,11 @@ public struct Server {
     }
 }
 
+public struct PlayProgress: Codable {
+    public var csrf: String
+    public var progress: Int
+}
+
 public struct Authenticated {
     let sessionId: String
     let csrf: String
@@ -109,11 +114,6 @@ public struct Authenticated {
     }
     
     public func playProgress(episode: EpisodeView, progress: Int) -> Endpoint<()> {
-        struct PlayProgress: Codable {
-            var csrf: String
-            var progress: Int
-        }
-        
         let url = baseURL.appendingPathComponent("episodes/\(episode.id)/play-progress")
         return Endpoint<()>(json: .post, url: url, body: PlayProgress(csrf: csrf, progress: progress), headers: authHeaders)
     }
