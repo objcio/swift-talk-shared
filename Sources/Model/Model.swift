@@ -43,6 +43,33 @@ public struct CollectionView: Codable {
 	}
 }
 
+public struct Markdown: Codable {
+    public var text: String
+    public init(_ text: String) { self.text = text }
+}
+
+public struct EpisodeDetails: Codable {
+    public struct TocItem: Codable {
+        public var position: TimeInterval
+        public var title: String
+        public init(position: TimeInterval, title: String) {
+            self.position = position
+            self.title = title
+        }
+    }
+    public var id: String
+    public var hls_url: URL?
+    public var toc: [TocItem]
+    public var transcript: Markdown
+    
+    public init(id: String, hls_url: URL?, toc: [TocItem], transcript: Markdown) {
+        self.id = id
+        self.hls_url = hls_url
+        self.toc = toc
+        self.transcript = transcript
+    }
+}
+
 public struct EpisodeView: Codable {
     public var id: String
     public var number: Int
@@ -88,10 +115,9 @@ public struct Server {
     
     public var allCollections: Endpoint<[CollectionView]> {
         return Endpoint<[CollectionView]>(json: .get, url: URL(string: "https://talk.objc.io/collections.json")!, decoder: decoder)
-
     }
 
-   public func authenticated(sessionId: String, csrf: String) -> Authenticated {
+   	public func authenticated(sessionId: String, csrf: String) -> Authenticated {
         return Authenticated(baseURL: baseURL, sessionId: sessionId, csrf: csrf)
     }
 }
@@ -120,5 +146,10 @@ public struct Authenticated {
     public func playProgress(episode: EpisodeView, progress: Int) -> Endpoint<()> {
         let url = baseURL.appendingPathComponent("episodes/\(episode.id)/play-progress")
         return Endpoint<()>(json: .post, url: url, body: PlayProgress(csrf: csrf, progress: progress), headers: authHeaders)
+    }
+    
+    public func episodeDetails(episode: EpisodeView) -> Endpoint<EpisodeDetails> {
+        let url = baseURL.appendingPathComponent("episodes/\(episode.id)/details")
+        return Endpoint<EpisodeDetails>(json: .get, url: url, headers: authHeaders)
     }
 }
