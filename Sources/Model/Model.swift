@@ -102,10 +102,16 @@ public struct EpisodeView: Codable {
 	}
 }
 
+public struct Credentials {
+    var sessionId: String
+    var csrf: String
+}
+
 public struct Server {
     public var baseURL: URL
+    public var credentials: Credentials? = nil
     
-    public init(baseURL: URL = URL(string: "https://talk.objc.io")!) {
+    public init(baseURL: URL = URL(string: "https://talk.objc.io")!, credentials: Credentials? = nil) {
         self.baseURL = baseURL
     }
     
@@ -117,8 +123,16 @@ public struct Server {
         return Endpoint<[CollectionView]>(json: .get, url: URL(string: "https://talk.objc.io/collections.json")!, decoder: decoder)
     }
 
-   	public func authenticated(sessionId: String, csrf: String) -> Authenticated {
-        return Authenticated(baseURL: baseURL, sessionId: sessionId, csrf: csrf)
+    public var authenticated: Authenticated? {
+        return credentials.map {
+            Authenticated(baseURL: baseURL, sessionId: $0.sessionId, csrf: $0.csrf)
+        }
+    }
+    
+    public func episodeDetails(episode: EpisodeView) -> Endpoint<EpisodeDetails> {
+        let url = baseURL.appendingPathComponent("episodes/\(episode.id)/details")
+        let authHeaders = authenticated?.authHeaders ?? [:]
+        return Endpoint<EpisodeDetails>(json: .get, url: url, headers: authHeaders)
     }
 }
 
@@ -137,7 +151,7 @@ public struct Authenticated {
         self.csrf = csrf
     }
     
-    var authHeaders: [String:String] {
+    fileprivate var authHeaders: [String:String] {
         return [
             "Cookie": "session=\(sessionId)"
         ]
@@ -146,10 +160,5 @@ public struct Authenticated {
     public func playProgress(episode: EpisodeView, progress: Int) -> Endpoint<()> {
         let url = baseURL.appendingPathComponent("episodes/\(episode.id)/play-progress")
         return Endpoint<()>(json: .post, url: url, body: PlayProgress(csrf: csrf, progress: progress), headers: authHeaders)
-    }
-    
-    public func episodeDetails(episode: EpisodeView) -> Endpoint<EpisodeDetails> {
-        let url = baseURL.appendingPathComponent("episodes/\(episode.id)/details")
-        return Endpoint<EpisodeDetails>(json: .get, url: url, headers: authHeaders)
     }
 }
