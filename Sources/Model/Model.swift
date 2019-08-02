@@ -158,7 +158,7 @@ public struct Authenticated {
     
     fileprivate var authHeaders: [String:String] {
         return [
-            "Cookie": "session=\(sessionId)"
+            "Cookie": "sessionid=\(sessionId)"
         ]
     }
     
