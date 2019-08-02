@@ -117,6 +117,7 @@ public struct Server {
     
     public init(baseURL: URL = URL(string: "https://talk.objc.io")!, credentials: Credentials? = nil) {
         self.baseURL = baseURL
+        self.credentials = credentials
     }
     
     public var allEpisodes: Endpoint<[EpisodeView]> {
