@@ -105,6 +105,10 @@ public struct EpisodeView: Codable {
 public struct Credentials {
     var sessionId: String
     var csrf: String
+    public init(sessionId: String, csrf: String) {
+        self.sessionId = sessionId
+        self.csrf = csrf
+    }
 }
 
 public struct Server {
